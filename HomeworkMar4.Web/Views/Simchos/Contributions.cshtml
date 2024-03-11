@@ -1,0 +1,64 @@
+﻿@model ContributionsViewModel
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col">
+            <form method="post" action="/simchos/addcontributions" id="add-contr">
+                <table class="table table-hover table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Contribute</th>
+                            <th>Name</th>
+                            <th>Balance</th>
+                            <th>Always Include</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contributor-rows">
+                        @foreach (var c in Model.Contributors)
+                        {
+                            bool hasContributed = Model.CurrentContributions.FirstOrDefault(con => con.ContributorID == c.Id) != null;
+                            decimal amt = hasContributed ? Model.CurrentContributions.First(con => con.ContributorID == c.Id).Amount : 5;
+                            <tr>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="form-check form-switch" data-cont-id="@c.Id">
+                                            @if (hasContributed)
+                                            {
+                                                <input id="is-contributing" style="width: 4rem; height: 2rem;" type="checkbox" class="form-check-input" checked value="true" />
+                                            }
+                                            else
+                                            {
+                                                <input id="is-contributing" style="width: 4rem; height: 2rem;" type="checkbox" class="form-check-input" />
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@c.FirstName @c.LastName</td>
+                                <td>@c.Balance.ToString("C")</td>
+                                <td style="text-align:center">
+                                    @if (c.AlwaysInclude)
+                                    {
+                                        <i class="bi bi-check-lg" style="font-size:large"></i>
+                                    }
+                                </td>
+                                <td id="vars">
+                                    <input id="amt" type="text" class="form-control" value="@amt" />
+                                    <input id="contid" type="hidden" value="@c.Id" />
+                                    <input id="simchaid" type="hidden" value="@Model.SimchaID" />
+                                </td>                                
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                
+                <div class="mt-5" style="text-align:center;">
+                    <button id="update-cont" class="btn btn-outline-danger">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/contributors.js"></script>
+}
